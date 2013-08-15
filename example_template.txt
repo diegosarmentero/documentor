@@ -1,0 +1,115 @@
+.. link:
+.. description:
+.. tags:
+.. date: 2013/08/14 20:14:35
+.. title: NINJA-IDE
+.. slug: diego
+
+.. class:: alert alert-info pull-top
+
+.. contents::
+
+
+*Module:* `ide <http://www.python.org/>`_ API
+=============================================
+
+This class is like the Sauron's Ring:
+
+One ring to rule them all, One ring to find them,
+
+One ring to bring them all and in the darkness bind them.
+
+This Class knows all the containers, and its know by all the containers,
+but the containers don't need to know between each other, in this way we
+can keep a better api without the need to tie the behaviour between
+the widgets, and let them just consume the 'actions' they need.
+
+*Imports:*
+----------
+
+- `os <http://www.python.org/>`_
+- `ninja_ide.gui.main_container <http://www.python.org/>`_
+
+*Global Attributes:*
+--------------------
+
+- `LANGUAGE <http://www.python.org/>`_
+- `VARIABLE <http://www.python.org/>`_
+
+----
+
+*Class:* `IDE <http://www.python.org/>`_
+-----------------------------------------
+
+.. code:: python
+   :number-lines:
+
+       class IDE(QMainWindow):
+
+| This class is like the Sauron's Ring:
+| One ring to rule them all, One ring to find them,
+| One ring to bring them all and in the darkness bind them.
+
+This Class knows all the containers, and its know by all the containers,
+but the containers don't need to know between each other, in this way we
+can keep a better api without the need to tie the behaviour between
+the widgets, and let them just consume the 'actions' they need.
+
+*Parents*
+~~~~~~~~~~
+
+- *object*
+- *QWidget*
+
+*Attributes*
+~~~~~~~~~~~~
+- `central  <http://www.python.org/>`_ [*type:* `CentralWidget  </listings/main_container.py.html#corepy-76>`_]
+- notification [notification.Notification(self)]
+- opacity
+- plugin_manager
+- profile
+- toolbar
+
+----
+
+*Function:* __init__
+~~~~~~~~~~~~~~~~~~~~
+.. code:: python
+   :number-lines:
+
+       def __init__(self):
+
+No description.
+
+----
+
+*Function:* `get_service <http://www.python.org/>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code:: python
+   :number-lines:
+
+       def get_service(self, message, duration=3000, **kwargs):
+
+Return the instance of a registered service.
+
+**Arguments:**
+
+- *message*
+- *duration=int*
+- *kwargs=dict*
+
+**Decorators:**
+
+- *mydeco*
+- *another_decorator*
+
+----
+
+*Function:* get_menuitems
+~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code:: python
+   :number-lines:
+
+       def get_menuitems(self):
+
+Return a dictionary with the registered menu items.
