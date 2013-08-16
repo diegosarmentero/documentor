@@ -5,6 +5,9 @@ Documentation generation tool for Python.
 Documentor scan all the source code of your project and generate a documentation 
 site with the collected information of your project using Nikola.
 
+### Documentation site for Documentor generated with Documentor:
+-  [Source Code Documentation](http://diegosarmentero.github.io/documentor-docs)
+
 ## Contact
 
 -   [Homepage](https://github.com/diegosarmentero/documentor) at github.com/diegosarmentero/documentor
