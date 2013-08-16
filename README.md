@@ -5,15 +5,6 @@ Documentation generation tool for Python.
 Documentor scan all the source code of your project and generate a documentation 
 site with the collected information of your project using Nikola.
 
-# **Ninja-ide** | Ninja-ide Is Not Just Another IDE.
-
-Ninja-IDE is a cross-platform integrated development environment (IDE) that runs
-on Linux/X11, Mac OS X and Windows desktop operating systems. Ninja-IDE allows
-developers to create applications for any purpose making the task of writing
-software easier and more enjoyable.
-
-# The code in repository is NOT working right now, we are integrating the changes and doing lot of improves for the new Architecture!!
-
 ## Contact
 
 -   [Homepage](https://github.com/diegosarmentero/documentor) at github.com/diegosarmentero/documentor
