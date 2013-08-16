@@ -15,7 +15,7 @@ site with the collected information of your project using Nikola.
 
 Both of these:
 
--   [Python](http://python.org/) >= 2.7 (or Python3)
+-   [Python](http://python.org/) >= 2.7 (Not Python3 yet)
 -   [Nikola](http://nikola.ralsina.com.ar/)
 
 
