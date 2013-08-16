@@ -8,7 +8,7 @@ site with the collected information of your project using Nikola.
 ## Contact
 
 -   [Homepage](https://github.com/diegosarmentero/documentor) at github.com/diegosarmentero/documentor
--   [@ninja\_ide](https://twitter.com/diegosarmentero) at Twitter
+-   [@diegosarmentero](https://twitter.com/diegosarmentero) at Twitter
 -   [#ninja-ide](irc://freenode.net/ninja-ide) at Freenode.net (I'm always here :P)
 
 ## Dependencies
