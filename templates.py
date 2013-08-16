@@ -10,20 +10,24 @@ BASE_FILE = """.. link:
 .. class:: alert alert-info pull-top
 
 .. contents::
+
 """
 
-MODULE = "*Module:* `%(name)s <%(link)s>`_ API"  # ==
-IMPORTS = "*Imports:*"  # --
-GLOBAL_ATTRIBUTES = "*Global Attributes:*"  # --
-CLASS = "*Class:* `%(name)s <%(link)s>`_"  # --
-CODE = """.. code:: python
+MODULE = "\n*Module:* `%(name)s <%(link)s>`_ API\n"  # ==
+IMPORTS = "\n*Imports:*\n"  # --
+GLOBAL_ATTRIBUTES = "\n*Global Attributes:*\n"  # --
+GLOBAL_FUNCTIONS = "\n*Global Functions:*\n"  # --
+CLASS = "\n*Class:* `%(name)s <%(link)s>`_\n"  # --
+CODE = """\n.. code:: python
    :number-lines:
 
        %(code)s
+
 """
-PARENTS = "*Parents*"  # ~
-ATTRIBUTES = "*Attributes*"  # ~
-FUNCTION = "*Function:* `%(name)s <%(link)s>`_"
-NO_DESCRIPTION = "No description."
-ARGUMENTS = "**Arguments:**"
-DECORATORS = "**Decorators:**"
+PARENTS = "\n*Parents*\n"  # ~~
+ATTRIBUTES = "\n*Attributes*\n"  # ~~
+FUNCTION = "\n*Function:* `%(name)s <%(link)s>`_\n"  # ~~
+NO_DESCRIPTION = "\nNo description.\n\n"
+ARGUMENTS = "\n**Arguments:**\n"
+DECORATORS = "\n**Decorators:**\n\n"
+LIST_LINK_ITEM = '- `%(name)s <%(link)s>`_\n'

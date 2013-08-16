@@ -8,7 +8,7 @@ BLOG_EMAIL = "%(email)s"
 
 SIDEBAR_LINKS = {
     DEFAULT_LANG: (
-        ('/documentor_files.html', 'Files'),
+        ('/documentor_modules.html', 'Modules'),
         ('/documentor_classes.html', 'Classes'),
         ('/documentor_functions.html', 'Functions'),
         ('/documentor_attributes.html', 'Attributes'),

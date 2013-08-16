@@ -17,8 +17,9 @@
 import _ast
 import ast
 import os
+import shutil
 
-#from ninja_ide.tools.completion import analyzer
+import docdump
 
 _map_type = {
     _ast.Tuple: 'tuple',
@@ -30,13 +31,93 @@ _map_type = {
 }
 
 
+def get_python_files(path):
+    """Return a dict structure containing the info inside a folder."""
+    if not os.path.exists(path):
+        raise Exception("The folder does not exist")
+    d = {}
+    for root, dirs, files in os.walk(path, followlinks=True):
+        d[root] = [[f for f in files
+                if (os.path.splitext(f.lower())[-1]) == '.py'],
+                dirs]
+    return d
+
+
 class Analyzer(object):
 
-    def __init__(self, project, output):
+    def __init__(self, project, output, projectname):
+        self.project = project
+        self.output = output
         self.files_folder = os.path.join(output, 'files')
         self.posts_folder = os.path.join(output, 'posts')
         self.stories_folder = os.path.join(output, 'stories')
         self.listings_folder = os.path.join(output, 'listings')
+        self.dump = docdump.DocDump(projectname, self.stories_folder)
+
+    def scan(self):
+        self.structure = get_python_files(self.project)
+        path = os.path.join(self.project, '')[:-1]
+        self.parse_folder(path, '')
+
+    def parse_folder(self, folderpath, relpath):
+        print 'Parsing folder: %s' % folderpath
+        files, folders = self.structure[folderpath]
+
+        for file_ in files:
+            filepath = os.path.join(folderpath, file_)
+            self.parse_file(filepath, relpath)
+
+        for folder in folders:
+            path = os.path.join(folderpath, folder)
+            self.parse_folder(path, os.path.join(relpath, folder))
+
+    def parse_file(self, filepath, relpath):
+        print 'Parsing file: %s' % filepath
+        codefolder = os.path.join(self.listings_folder, relpath)
+        if not os.path.exists(codefolder):
+            os.makedirs(codefolder)
+        shutil.copy(filepath, codefolder)
+
+        source = ""
+        with open(filepath, 'r') as f:
+            source = f.read()
+        if source:
+            symbols = self.obtain_symbols(source, filepath)
+            self.dump.process_symbols(symbols, filepath, relpath)
+
+    def obtain_symbols(self, source, filename=''):
+        """Parse a module code to obtain: Classes, Functions and Assigns."""
+        try:
+            module = ast.parse(source)
+        except:
+            print "The file contains syntax errors: %s" % filename
+            return {}
+        symbols = {}
+        globalAttributes = {}
+        globalFunctions = {}
+        classes = {}
+
+        for symbol in module.body:
+            if symbol.__class__ is ast.Assign:
+                result = self._parse_assign(symbol)
+                globalAttributes.update(result[0])
+                globalAttributes.update(result[1])
+            elif symbol.__class__ is ast.FunctionDef:
+                result = self._parse_function(symbol)
+                globalFunctions[result['name']] = result
+            elif symbol.__class__ is ast.ClassDef:
+                result = self._parse_class(symbol)
+                classes[result['name']] = result
+        if globalAttributes:
+            symbols['attributes'] = globalAttributes
+        if globalFunctions:
+            symbols['functions'] = globalFunctions
+        if classes:
+            symbols['classes'] = classes
+        symbols['imports'] = self._parse_imports(module)
+        symbols['docstring'] = ast.get_docstring(module, clean=True)
+
+        return symbols
 
     def expand_attribute(self, attribute):
         parent_name = []
@@ -67,11 +148,11 @@ class Analyzer(object):
                 assigns[var.id] = var.lineno
         return (assigns, attributes)
 
-    def _parse_class(self, symbol, with_docstrings):
-        docstring = {}
+    def _parse_class(self, symbol):
+        docstring = ""
         attr = {}
         func = {}
-        clazz = {}
+        decorators = []
         name = symbol.name + '('
         name += ', '.join([
             self.expand_attribute(base) for base in symbol.bases])
@@ -82,32 +163,23 @@ class Analyzer(object):
                 attr.update(result[0])
                 attr.update(result[1])
             elif sym.__class__ is ast.FunctionDef:
-                result = self._parse_function(sym, with_docstrings)
+                result = self._parse_function(sym)
                 attr.update(result['attrs'])
-                if with_docstrings:
-                    docstring.update(result['docstring'])
-                func[result['name']] = {'lineno': result['lineno'],
-                    'functions': result['functions']}
-            elif sym.__class__ is ast.ClassDef:
-                result = self._parse_class(sym, with_docstrings)
-                clazz[result['name']] = {'lineno': result['lineno'],
-                    'members': {'attributes': result['attributes'],
-                    'functions': result['functions']}}
-                docstring.update(result['docstring'])
-        if with_docstrings:
-            docstring[symbol.lineno] = ast.get_docstring(symbol, clean=True)
+                func[result['name']] = result
+
+        docstring = ast.get_docstring(symbol, clean=True)
 
         lineno = symbol.lineno
         for decorator in symbol.decorator_list:
-            lineno += 1
+            decorators.append(self.expand_attribute(decorator))
 
         return {'name': name, 'attributes': attr, 'functions': func,
-            'lineno': lineno, 'docstring': docstring, 'classes': clazz}
+            'lineno': lineno, 'docstring': docstring, 'decorators': decorators}
 
-    def _parse_function(self, symbol, with_docstrings):
-        docstring = {}
+    def _parse_function(self, symbol):
+        docstring = ""
         attrs = {}
-        func = {'functions': {}}
+        decorators = []
 
         func_name = symbol.name + '('
         #We store the arguments to compare with default backwards
@@ -147,77 +219,22 @@ class Analyzer(object):
             if sym.__class__ is ast.Assign:
                 result = self._parse_assign(sym)
                 attrs.update(result[1])
-            elif sym.__class__ is ast.FunctionDef:
-                result = self._parse_function(sym, with_docstrings)
-                if with_docstrings:
-                    docstring.update(result['docstring'])
-                func['functions'][result['name']] = {'lineno': result['lineno'],
-                    'functions': result['functions']}
 
-        if with_docstrings:
-            docstring[symbol.lineno] = ast.get_docstring(symbol, clean=True)
+        docstring = ast.get_docstring(symbol, clean=True)
 
         lineno = symbol.lineno
         for decorator in symbol.decorator_list:
-            lineno += 1
+            decorators.append(self.expand_attribute(decorator))
 
         return {'name': func_name, 'lineno': lineno,
-            'attrs': attrs, 'docstring': docstring, 'functions': func}
+            'attrs': attrs, 'docstring': docstring, 'decorators': decorators}
 
-    def obtain_symbols(self, source, with_docstrings=False, filename=''):
-        """Parse a module code to obtain: Classes, Functions and Assigns."""
-        try:
-            module = ast.parse(source)
-        except:
-            print "The file contains syntax errors: %s" % filename
-            return {}
-        symbols = {}
-        globalAttributes = {}
-        globalFunctions = {}
-        classes = {}
-        docstrings = {}
-
-        for symbol in module.body:
-            if symbol.__class__ is ast.Assign:
-                result = self._parse_assign(symbol)
-                globalAttributes.update(result[0])
-                globalAttributes.update(result[1])
-            elif symbol.__class__ is ast.FunctionDef:
-                result = self._parse_function(symbol, with_docstrings)
-                if with_docstrings:
-                    docstrings.update(result['docstring'])
-                globalFunctions[result['name']] = {'lineno': result['lineno'],
-                    'functions': result['functions']}
-            elif symbol.__class__ is ast.ClassDef:
-                result = self._parse_class(symbol, with_docstrings)
-                classes[result['name']] = {'lineno': result['lineno'],
-                    'members': {'attributes': result['attributes'],
-                    'functions': result['functions'],
-                    'classes': result['classes']}}
-                docstrings.update(result['docstring'])
-        if globalAttributes:
-            symbols['attributes'] = globalAttributes
-        if globalFunctions:
-            symbols['functions'] = globalFunctions
-        if classes:
-            symbols['classes'] = classes
-        if docstrings and with_docstrings:
-            symbols['docstrings'] = docstrings
-
-        return symbols
-
-    def obtain_imports(self, source='', body=None):
-        if source:
-            try:
-                module = ast.parse(source)
-                body = module.body
-            except:
-                print "A file contains syntax errors"
+    def _parse_imports(self, module):
         #Imports{} = {name: asname}, for example = {sys: sysAlias}
         imports = {}
         #From Imports{} = {name: {module: fromPart, asname: nameAlias}}
         fromImports = {}
-        for sym in body:
+        for sym in module.body:
             if type(sym) is ast.Import:
                 for item in sym.names:
                     imports[item.name] = {'asname': item.asname,

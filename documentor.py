@@ -42,7 +42,10 @@ def document():
         if os.path.exists(output_folder):
             new_conf.create_new_configuration(output_folder,
                                               project_name, email)
-            analyzer.Analyzer(project, output_folder)
+            worker = analyzer.Analyzer(project, output_folder, project_name)
+            worker.scan()
+            process = subprocess.Popen(["nikola", "build"], cwd=output_folder)
+            process.wait()
         else:
             print 'Something went wrong and output folder could not be created'
 
