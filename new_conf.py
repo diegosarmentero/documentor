@@ -11,7 +11,6 @@ SIDEBAR_LINKS = {
         ('/documentor_modules.html', 'Modules'),
         ('/documentor_classes.html', 'Classes'),
         ('/documentor_functions.html', 'Functions'),
-        ('/documentor_attributes.html', 'Attributes'),
     ),
 }
 

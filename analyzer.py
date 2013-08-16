@@ -55,6 +55,7 @@ class Analyzer(object):
         self.structure = get_python_files(self.project)
         path = os.path.join(self.project, '')[:-1]
         self.parse_folder(path, '')
+        self.dump.create_html_sections()
 
     def parse_folder(self, folderpath, relpath):
         print 'Parsing folder: %s' % folderpath

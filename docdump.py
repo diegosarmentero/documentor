@@ -5,22 +5,32 @@ import datetime
 import templates
 
 
+#FIXME: Improve the code for content creation
+
+
 class DocDump(object):
 
     def __init__(self, projectname, output):
         self.projectname = projectname
+        today = datetime.date.today()
+        self.date = today.strftime('%Y/%m/%d %H:%M:%S')
         self.files_folder = os.path.join(output, 'files')
         self.posts_folder = os.path.join(output, 'posts')
         self.output = os.path.join(output, 'stories')
 
+        self._create_post()
+
+        self.__modules = []
+        self.__classes = []
+        self.__functions = []
+
     def process_symbols(self, symbols, filepath, relpath):
-        today = datetime.date.today()
         basename = os.path.basename(filepath)
         name = os.path.splitext(basename)[0]
         path = os.path.join(self.output, relpath)
         htmlpath = os.path.join('/listings/', relpath, basename + '.html')
         content = templates.BASE_FILE % {
-            'date': today.strftime('%Y/%m/%d %H:%M:%S'),
+            'date': self.date,
             'projectname': self.projectname,
             'filename': name
         }
@@ -51,12 +61,24 @@ class DocDump(object):
             content = content[:-4]
         content += '\n\n'
 
+        self.__modules.append((basename, htmlpath, 0))
+
         if not os.path.exists(path):
             os.makedirs(path)
 
         write_path = os.path.join(path, name + '.txt')
         with open(write_path, 'w') as f:
             f.write(content)
+
+    def _create_post(self):
+        post = templates.POST % {
+            'date': self.date,
+            'projectname': self.projectname
+        }
+
+        path = os.path.join(self.posts_folder, 'index_post' + '.txt')
+        with open(path, 'w') as f:
+            f.write(post)
 
     def _add_imports(self, symbols, htmlpath):
         content = ''
@@ -142,6 +164,8 @@ class DocDump(object):
             for decorator in symbol['decorators']:
                 content += '- *%s*\n' % decorator
 
+        self.__functions.append((function_name, htmlpath, symbol['lineno']))
+
         content += '\n----\n'
 
         return content
@@ -190,4 +214,65 @@ class DocDump(object):
             else:
                 content += '\n----\n'
 
+            self.__classes.append((clazz_name, htmlpath,
+                clazzes[clazz]['lineno']))
+
         return content
+
+    def create_html_sections(self):
+        # Modules
+        html = templates.HTML_FILES_HEADER % {
+            'projectname': self.projectname,
+            'type': 'Modules'
+        }
+        for mod in sorted(self.__modules, key=lambda x: x[0]):
+            html += templates.HTML_FILES_BODY % {
+                'link': mod[1],
+                'name': mod[0]
+            }
+        html += templates.HTML_FILES_FOOTER % {
+            'year': str(datetime.date.today().year),
+            'projectname': self.projectname
+        }
+
+        path = os.path.join(self.files_folder, 'documentor_modules.html')
+        with open(path, 'w') as f:
+            f.write(html)
+
+        # Classes
+        html = templates.HTML_FILES_HEADER % {
+            'projectname': self.projectname,
+            'type': 'Classes'
+        }
+        for cla in sorted(self.__classes, key=lambda x: x[0]):
+            html += templates.HTML_FILES_BODY % {
+                'link': "%s#%d" % (cla[1], cla[2]),
+                'name': cla[0]
+            }
+        html += templates.HTML_FILES_FOOTER % {
+            'year': str(datetime.date.today().year),
+            'projectname': self.projectname
+        }
+
+        path = os.path.join(self.files_folder, 'documentor_classes.html')
+        with open(path, 'w') as f:
+            f.write(html)
+
+        # Functions
+        html = templates.HTML_FILES_HEADER % {
+            'projectname': self.projectname,
+            'type': 'Functions'
+        }
+        for fun in sorted(self.__functions, key=lambda x: x[0]):
+            html += templates.HTML_FILES_BODY % {
+                'link': "%s#%d" % (fun[1], fun[2]),
+                'name': fun[0]
+            }
+        html += templates.HTML_FILES_FOOTER % {
+            'year': str(datetime.date.today().year),
+            'projectname': self.projectname
+        }
+
+        path = os.path.join(self.files_folder, 'documentor_functions.html')
+        with open(path, 'w') as f:
+            f.write(html)
