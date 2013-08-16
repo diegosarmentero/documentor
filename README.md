@@ -40,7 +40,8 @@ documentor.py [-h] [-p project] [-o Output Folder]
               [--email email]
               [--serve False/True: default False]
 
-$documentor -p project_path -o output_path [--projectname name, --email address --serve=True/False]
+$documentor -p project_path -o output_path [--projectname name, 
+            --email address --serve=True/False]
 
 - "serve" can take "output" as the project which need to be served as documentation
 
