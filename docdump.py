@@ -9,7 +9,9 @@ class DocDump(object):
 
     def __init__(self, projectname, output):
         self.projectname = projectname
-        self.output = output
+        self.files_folder = os.path.join(output, 'files')
+        self.posts_folder = os.path.join(output, 'posts')
+        self.output = os.path.join(output, 'stories')
 
     def process_symbols(self, symbols, filepath, relpath):
         today = datetime.date.today()

@@ -48,11 +48,8 @@ class Analyzer(object):
     def __init__(self, project, output, projectname):
         self.project = project
         self.output = output
-        self.files_folder = os.path.join(output, 'files')
-        self.posts_folder = os.path.join(output, 'posts')
-        self.stories_folder = os.path.join(output, 'stories')
         self.listings_folder = os.path.join(output, 'listings')
-        self.dump = docdump.DocDump(projectname, self.stories_folder)
+        self.dump = docdump.DocDump(projectname, output)
 
     def scan(self):
         self.structure = get_python_files(self.project)
