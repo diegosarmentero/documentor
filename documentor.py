@@ -6,14 +6,6 @@ import analyzer
 import arguments
 import new_conf
 
-try:
-    import nikola  # lint:ok
-except:
-    print """\nYou need to install Nikola in order to use Documentor, check out:
-
-    http://nikola.ralsina.com.ar/\n\n"""
-    raise Exception("Nikola is not installed.")
-
 
 def document():
     project, projectname, output, email, serve = arguments.parse()

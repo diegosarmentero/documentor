@@ -4,6 +4,14 @@ import datetime
 
 import templates
 
+try:
+    from nikola import utils
+except:
+    print """\nYou need to install Nikola in order to use Documentor, check out:
+
+    http://nikola.ralsina.com.ar/\n\n"""
+    raise Exception("Nikola is not installed.")
+
 
 #FIXME: Improve the code for content creation
 
@@ -140,9 +148,11 @@ class DocDump(object):
 
     def _add_function(self, symbol, htmlpath, docpath):
         content = ''
+        name_to_slugy = os.path.splitext(htmlpath)[0]
+        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
         function_name = templates.FUNCTION % {
             'name': "%s [at ln:%d]" % (symbol['name'], symbol['lineno']),
-            'link': '%s#%s' % (htmlpath, symbol['lineno'])
+            'link': '%s#%s-%s' % (htmlpath, slugy, symbol['lineno'])
         }
         content += function_name + ('~' * len(function_name)) + '\n'
 
@@ -174,10 +184,12 @@ class DocDump(object):
     def _add_classes(self, symbols, htmlpath, docpath):
         content = ''
         clazzes = symbols.get('classes', [])
+        name_to_slugy = os.path.splitext(htmlpath)[0]
+        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
         for clazz in clazzes:
             clazz_name = templates.CLASS % {
                 'name': clazz,
-                'link': '%s#%s' % (htmlpath, clazzes[clazz]['lineno'])
+                'link': '%s#%s-%s' % (htmlpath, slugy, clazzes[clazz]['lineno'])
             }
             content += clazz_name + ('-' * len(clazz_name)) + '\n'
 
@@ -246,8 +258,10 @@ class DocDump(object):
             'type': 'Classes'
         }
         for cla in sorted(self.__classes, key=lambda x: x[0]):
+            name_to_slugy = os.path.splitext(cla[1])[0]
+            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
             html += templates.HTML_FILES_BODY % {
-                'link': "%s#%d" % (cla[1], cla[2]),
+                'link': "%s#%s-%d" % (cla[1], slugy, cla[2]),
                 'name': cla[0]
             }
         html += templates.HTML_FILES_FOOTER % {
@@ -265,8 +279,10 @@ class DocDump(object):
             'type': 'Functions'
         }
         for fun in sorted(self.__functions, key=lambda x: x[0]):
+            name_to_slugy = os.path.splitext(fun[1])[0]
+            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
             html += templates.HTML_FILES_BODY % {
-                'link': "%s#%d" % (fun[1], fun[2]),
+                'link': "%s#%s-%d" % (fun[1], slugy, fun[2]),
                 'name': fun[0]
             }
         html += templates.HTML_FILES_FOOTER % {

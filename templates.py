@@ -19,7 +19,6 @@ GLOBAL_ATTRIBUTES = "\n*Global Attributes:*\n"  # --
 GLOBAL_FUNCTIONS = "\n*Global Functions:*\n"  # --
 CLASS = "\n*Class:* `%(name)s <%(link)s>`_\n"  # --
 CODE = """\n.. code:: python
-   :number-lines:
 
        %(code)s
 
