@@ -29,6 +29,7 @@ class DocDump(object):
         name = os.path.splitext(basename)[0]
         path = os.path.join(self.output, relpath)
         htmlpath = os.path.join('/listings/', relpath, basename + '.html')
+        docpath = os.path.join('/stories/', relpath, name + '.html')
         content = templates.BASE_FILE % {
             'date': self.date,
             'projectname': self.projectname,
@@ -53,15 +54,15 @@ class DocDump(object):
 
         content += self._add_imports(symbols, htmlpath) + '\n'
         content += self._add_global_attributes(symbols, htmlpath) + '\n'
-        content += self._add_global_functions(symbols, htmlpath) + '\n'
-        content += self._add_classes(symbols, htmlpath) + '\n'
+        content += self._add_global_functions(symbols, htmlpath, docpath) + '\n'
+        content += self._add_classes(symbols, htmlpath, docpath) + '\n'
 
         content = content.strip()
         if content[-4:] == '----':
             content = content[:-4]
         content += '\n\n'
 
-        self.__modules.append((basename, htmlpath, 0))
+        self.__modules.append((basename, docpath, 0))
 
         if not os.path.exists(path):
             os.makedirs(path)
@@ -124,7 +125,7 @@ class DocDump(object):
 
         return content
 
-    def _add_global_functions(self, symbols, htmlpath):
+    def _add_global_functions(self, symbols, htmlpath, docpath):
         content = ''
         funcs = symbols.get('functions')
         if funcs:
@@ -133,11 +134,11 @@ class DocDump(object):
 
             funcs_key = sorted(funcs.keys())
             for func in funcs_key:
-                content += self._add_function(funcs[func], htmlpath)
+                content += self._add_function(funcs[func], htmlpath, docpath)
 
         return content
 
-    def _add_function(self, symbol, htmlpath):
+    def _add_function(self, symbol, htmlpath, docpath):
         content = ''
         function_name = templates.FUNCTION % {
             'name': "%s [at ln:%d]" % (symbol['name'], symbol['lineno']),
@@ -164,13 +165,13 @@ class DocDump(object):
             for decorator in symbol['decorators']:
                 content += '- *%s*\n' % decorator
 
-        self.__functions.append((function_name, htmlpath, symbol['lineno']))
+        self.__functions.append((symbol['name'], docpath, symbol['lineno']))
 
         content += '\n----\n'
 
         return content
 
-    def _add_classes(self, symbols, htmlpath):
+    def _add_classes(self, symbols, htmlpath, docpath):
         content = ''
         clazzes = symbols.get('classes', [])
         for clazz in clazzes:
@@ -210,12 +211,12 @@ class DocDump(object):
             if funcs:
                 funcs_key = sorted(funcs.keys())
                 for func in funcs_key:
-                    content += self._add_function(funcs[func], htmlpath)
+                    content += self._add_function(funcs[func], htmlpath,
+                        docpath)
             else:
                 content += '\n----\n'
 
-            self.__classes.append((clazz_name, htmlpath,
-                clazzes[clazz]['lineno']))
+            self.__classes.append((clazz, docpath, clazzes[clazz]['lineno']))
 
         return content
 
