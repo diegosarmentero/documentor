@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+#
+# This file is part of Documentor
+# (https://github.com/diegosarmentero/documentor).
+#
+# Documentor is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# any later version.
+#
+# Documentor is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Documentor; If not, see <http://www.gnu.org/licenses/>.
+
+"""Templates to generate the restructured text results."""
 
 BASE_FILE = """.. link:
 .. description:
@@ -68,12 +86,12 @@ HTML_FILES_HEADER = """
     <meta name="description" content="">
     <meta name="author" content="%(projectname)s">
     <title>%(projectname)s | %(projectname)s Documentation</title>
-            <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-            <link href="../../assets/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
-        <link href="../../assets/css/rst.css" rel="stylesheet" type="text/css">
-        <link href="../../assets/css/code.css" rel="stylesheet" type="text/css">
-        <link href="../../assets/css/colorbox.css" rel="stylesheet" type="text/css">
-        <link href="../../assets/css/theme.css" rel="stylesheet" type="text/css">
+            <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+            <link href="assets/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/rst.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/code.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/colorbox.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/theme.css" rel="stylesheet" type="text/css">
         <link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
 </head>
 <body>
@@ -87,15 +105,15 @@ HTML_FILES_HEADER = """
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </a>
-            <a class="brand" href="../../">
+            <a class="brand" href="#">
             %(projectname)s Documentation
             </a>
             <!-- Everything you want hidden at 940px or less, place within here -->
             <div class="nav-collapse collapse">
                 <ul class="nav">
-            <li><a href="../../documentor_modules.html">Modules</a>
-            </li><li><a href="../../documentor_classes.html">Classes</a>
-            </li><li><a href="../../documentor_functions.html">Functions</a>
+            <li><a href="documentor_modules.html">Modules</a>
+            </li><li><a href="documentor_classes.html">Classes</a>
+            </li><li><a href="documentor_functions.html">Functions</a>
                 </li></ul>
             </div>
         </div>
@@ -112,9 +130,9 @@ HTML_FILES_HEADER = """
     <div class="contents alert alert-info pull-top topic" id="contents">
 <p class="topic-title first">Index</p>
 <ul class="simple">
-<li><a class="reference internal" href="../../documentor_modules.html" id="id1"><em>Modules</em></a>
-<li><a class="reference internal" href="../../documentor_classes.html" id="id1"><em>Classes</em></a>
-<li><a class="reference internal" href="../../documentor_functions.html" id="id1"><em>Functions</em></a>
+<li><a class="reference internal" href="documentor_modules.html" id="id1"><em>Modules</em></a>
+<li><a class="reference internal" href="documentor_classes.html" id="id1"><em>Classes</em></a>
+<li><a class="reference internal" href="documentor_functions.html" id="id1"><em>Functions</em></a>
 </li>
 </ul>
 </div>
@@ -133,9 +151,9 @@ HTML_FILES_FOOTER = """
 <div class="footerbox">
     Contents © %(year)s         <a href="#">%(projectname)s</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a> and <a href="https://github.com/diegosarmentero/documentor">Documentor</a>
 </div>
-            <script src="../../assets/js/jquery-1.7.2.min.js" type="text/javascript"></script>
-            <script src="../../assets/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="../../assets/js/jquery.colorbox-min.js" type="text/javascript"></script>
+            <script src="assets/js/jquery-1.7.2.min.js" type="text/javascript"></script>
+            <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/js/jquery.colorbox-min.js" type="text/javascript"></script>
     <script type="text/javascript">jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"80%%",maxHeight:"80%%",scalePhotos:true});</script>
 </body>
 </html>

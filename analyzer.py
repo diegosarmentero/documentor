@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of NINJA-IDE (http://ninja-ide.org).
+# This file is part of Documentor
+# (https://github.com/diegosarmentero/documentor).
 #
-# NINJA-IDE is free software; you can redistribute it and/or modify
+# Documentor is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # any later version.
 #
-# NINJA-IDE is distributed in the hope that it will be useful,
+# Documentor is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with NINJA-IDE; If not, see <http://www.gnu.org/licenses/>.
+# along with Documentor; If not, see <http://www.gnu.org/licenses/>.
 import _ast
 import ast
 import os
@@ -31,6 +32,9 @@ _map_type = {
 }
 
 
+"""Scan each file and generate a representation of the content using AST."""
+
+
 def get_python_files(path):
     """Return a dict structure containing the info inside a folder."""
     if not os.path.exists(path):
@@ -44,6 +48,7 @@ def get_python_files(path):
 
 
 class Analyzer(object):
+    """Explore recursively the project folder and scan the info of each file."""
 
     def __init__(self, project, output, projectname):
         self.project = project
@@ -52,12 +57,14 @@ class Analyzer(object):
         self.dump = docdump.DocDump(projectname, output)
 
     def scan(self):
+        """Initialize the scan process."""
         self.structure = get_python_files(self.project)
         path = os.path.join(self.project, '')[:-1]
         self.parse_folder(path, '')
         self.dump.create_html_sections()
 
     def parse_folder(self, folderpath, relpath):
+        """Parse the folders and files contained inside folderpath."""
         print 'Parsing folder: %s' % folderpath
         files, folders = self.structure[folderpath]
 
@@ -70,6 +77,13 @@ class Analyzer(object):
             self.parse_folder(path, os.path.join(relpath, folder))
 
     def parse_file(self, filepath, relpath):
+        """Parse the file and create a representation with all the info about:
+        - Imports
+        - Classes
+        - Functions
+        - Attributes
+        - Decorators
+        - etc"""
         print 'Parsing file: %s' % filepath
         codefolder = os.path.join(self.listings_folder, relpath)
         if not os.path.exists(codefolder):
@@ -118,6 +132,7 @@ class Analyzer(object):
         return symbols
 
     def expand_attribute(self, attribute):
+        """Expand the node to obtain the expanded representation."""
         parent_name = []
         while attribute.__class__ is ast.Attribute:
             parent_name.append(attribute.attr)
@@ -137,6 +152,7 @@ class Analyzer(object):
         return name
 
     def _parse_assign(self, symbol):
+        """Parse assign and extract the info from the node."""
         assigns = {}
         attributes = {}
         for var in symbol.targets:
@@ -147,6 +163,7 @@ class Analyzer(object):
         return (assigns, attributes)
 
     def _parse_class(self, symbol):
+        """Parse class and extract the info from the node."""
         docstring = ""
         attr = {}
         func = {}
@@ -175,6 +192,7 @@ class Analyzer(object):
             'lineno': lineno, 'docstring': docstring, 'decorators': decorators}
 
     def _parse_function(self, symbol):
+        """Parse function and extract the info from the node."""
         docstring = ""
         attrs = {}
         decorators = []
@@ -228,6 +246,7 @@ class Analyzer(object):
             'attrs': attrs, 'docstring': docstring, 'decorators': decorators}
 
     def _parse_imports(self, module):
+        """Parse imports and extract the info from the node."""
         #Imports{} = {name: asname}, for example = {sys: sysAlias}
         imports = {}
         #From Imports{} = {name: {module: fromPart, asname: nameAlias}}

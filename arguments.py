@@ -30,6 +30,7 @@ epilog = ("This program comes with ABSOLUTELY NO WARRANTY."
 
 
 def parse():
+    """Parse the arguments received from the command line."""
     global usage
     global epilog
     project = None
@@ -37,6 +38,7 @@ def parse():
     output = None
     email = None
     serve = False
+    deploy = None
 
     try:
         parser = argparse.ArgumentParser(description=usage, epilog=epilog)
@@ -53,6 +55,8 @@ def parse():
             help='email address of the project', default=None)
         parser.add_argument('--serve', metavar='False/True: default False',
             type=str, help='Serve Documentation site', default=False)
+        parser.add_argument('-d', '--deploy', metavar='git-repository',
+            type=str, help='Git Repository to deploy content', default=None)
 
         opts = parser.parse_args()
         project = opts.project
@@ -60,7 +64,8 @@ def parse():
         output = opts.output
         email = opts.email
         serve = opts.serve
+        deploy = opts.deploy
     except Exception as reason:
         print("Args couldn't be parsed.")
         print(reason)
-    return (project, projectname, output, email, serve)
+    return (project, projectname, output, email, serve, deploy)

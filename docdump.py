@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+#
+# This file is part of Documentor
+# (https://github.com/diegosarmentero/documentor).
+#
+# Documentor is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# any later version.
+#
+# Documentor is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Documentor; If not, see <http://www.gnu.org/licenses/>.
 import os
 import datetime
 
@@ -17,6 +33,7 @@ except:
 
 
 class DocDump(object):
+    """Create a restructured text file with the representation obtained."""
 
     def __init__(self, projectname, output):
         self.projectname = projectname
@@ -33,11 +50,12 @@ class DocDump(object):
         self.__functions = []
 
     def process_symbols(self, symbols, filepath, relpath):
+        """Process the symbols to create the documentation file."""
         basename = os.path.basename(filepath)
         name = os.path.splitext(basename)[0]
         path = os.path.join(self.output, relpath)
         htmlpath = os.path.join('/listings/', relpath, basename + '.html')
-        docpath = os.path.join('/stories/', relpath, name + '.html')
+        docpath = os.path.join('stories/', relpath, name + '.html')
         content = templates.BASE_FILE % {
             'date': self.date,
             'projectname': self.projectname,
@@ -80,6 +98,7 @@ class DocDump(object):
             f.write(content)
 
     def _create_post(self):
+        """Create a post to show in the index page."""
         post = templates.POST % {
             'date': self.date,
             'projectname': self.projectname
@@ -90,6 +109,7 @@ class DocDump(object):
             f.write(post)
 
     def _add_imports(self, symbols, htmlpath):
+        """Add the imports to the Module Documentation."""
         content = ''
         results = symbols['imports']
         imports = results['imports']
@@ -100,10 +120,12 @@ class DocDump(object):
                         '-' * len(templates.IMPORTS)) + '\n'
 
         imports_key = sorted(imports.keys())
+        name_to_slugy = os.path.splitext(htmlpath)[0]
+        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
         for imp in imports_key:
             content += templates.LIST_LINK_ITEM % {
                 'name': imp,
-                'link': '%s#%s' % (htmlpath, imports[imp]['lineno'])
+                'link': '%s#%s-%s' % (htmlpath, slugy, imports[imp]['lineno'])
             } + '\n'
 
         fromImports_key = sorted(fromImports.keys())
@@ -116,6 +138,7 @@ class DocDump(object):
         return content
 
     def _add_global_attributes(self, symbols, htmlpath):
+        """Add the global attributes to the Module Documentation."""
         content = ''
         attrs = symbols.get('attributes')
         if attrs:
@@ -123,10 +146,12 @@ class DocDump(object):
                         '-' * len(templates.GLOBAL_ATTRIBUTES)) + '\n'
 
             attrs_key = sorted(attrs.keys())
+            name_to_slugy = os.path.splitext(htmlpath)[0]
+            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
             for attr in attrs_key:
                 content += templates.LIST_LINK_ITEM % {
                     'name': "%s [at ln:%d]" % (attr, attrs[attr]),
-                    'link': '%s#%s' % (htmlpath, attrs[attr])
+                    'link': '%s#%s-%s' % (htmlpath, slugy, attrs[attr])
                 } + '\n'
 
             content += '\n----\n'
@@ -134,6 +159,7 @@ class DocDump(object):
         return content
 
     def _add_global_functions(self, symbols, htmlpath, docpath):
+        """Add the global functions to the Module Documentation."""
         content = ''
         funcs = symbols.get('functions')
         if funcs:
@@ -147,6 +173,7 @@ class DocDump(object):
         return content
 
     def _add_function(self, symbol, htmlpath, docpath):
+        """Add the function with the function content and style."""
         content = ''
         name_to_slugy = os.path.splitext(htmlpath)[0]
         slugy = utils.slugify(name_to_slugy.decode('utf-8'))
@@ -182,6 +209,7 @@ class DocDump(object):
         return content
 
     def _add_classes(self, symbols, htmlpath, docpath):
+        """Add the class with the class content and style."""
         content = ''
         clazzes = symbols.get('classes', [])
         name_to_slugy = os.path.splitext(htmlpath)[0]
@@ -216,7 +244,7 @@ class DocDump(object):
                 for attr in attrs_key:
                     content += templates.LIST_LINK_ITEM % {
                         'name': "%s [at ln:%d]" % (attr, attrs[attr]),
-                        'link': '%s#%s' % (htmlpath, attrs[attr])
+                        'link': '%s#%s-%s' % (htmlpath, slugy, attrs[attr])
                     } + '\n'
 
             funcs = clazzes[clazz]['functions']
@@ -233,6 +261,7 @@ class DocDump(object):
         return content
 
     def create_html_sections(self):
+        """Create the sections to access: Modules, Classes and Functions."""
         # Modules
         html = templates.HTML_FILES_HEADER % {
             'projectname': self.projectname,
