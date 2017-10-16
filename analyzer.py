@@ -15,9 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Documentor; If not, see <http://www.gnu.org/licenses/>.
-import _ast
-import ast
 import os
+import ast
+import _ast
 import shutil
 
 import docdump
@@ -65,7 +65,7 @@ class Analyzer(object):
 
     def parse_folder(self, folderpath, relpath):
         """Parse the folders and files contained inside folderpath."""
-        print 'Parsing folder: %s' % folderpath
+        print('Parsing folder: %s' % folderpath)
         files, folders = self.structure[folderpath]
 
         for file_ in files:
@@ -84,7 +84,7 @@ class Analyzer(object):
         - Attributes
         - Decorators
         - etc"""
-        print 'Parsing file: %s' % filepath
+        print('Parsing file: %s' % filepath)
         codefolder = os.path.join(self.listings_folder, relpath)
         if not os.path.exists(codefolder):
             os.makedirs(codefolder)
@@ -102,7 +102,7 @@ class Analyzer(object):
         try:
             module = ast.parse(source)
         except:
-            print "The file contains syntax errors: %s" % filename
+            print("The file contains syntax errors: %s" % filename)
             return {}
         symbols = {}
         globalAttributes = {}

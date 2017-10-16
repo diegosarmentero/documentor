@@ -36,7 +36,7 @@ def _get_project_name(projectname, project):
 
 def _deploy(output, deploy):
     """Deploy the site to Github Pages."""
-    print '\nDeploy...\n'
+    print('\nDeploy...\n')
     output_folder = os.path.join(output, 'output')
     commands = [
         ["git", "init"],
@@ -51,7 +51,7 @@ def _deploy(output, deploy):
     for command in commands:
         process = subprocess.Popen(command, cwd=output_folder)
         process.wait()
-    print '\nDeploy Complete!\n'
+    print('\nDeploy Complete!\n')
 
 
 def _serve(output):
@@ -93,7 +93,7 @@ def document():
             process = subprocess.Popen(["nikola", "build"], cwd=output_folder)
             process.wait()
         else:
-            print 'Something went wrong and output folder could not be created'
+            print('Something went wrong and output folder could not be created')
 
 
 if __name__ == '__main__':
