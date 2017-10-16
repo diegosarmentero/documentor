@@ -23,9 +23,8 @@ import templates
 try:
     from nikola import utils
 except:
-    print """\nYou need to install Nikola in order to use Documentor, check out:
-
-    http://nikola.ralsina.com.ar/\n\n"""
+    print("""\nYou need to install Nikola in order to use Documentor, check out:
+    http://nikola.ralsina.com.ar/\n\n""")
     raise Exception("Nikola is not installed.")
 
 
@@ -121,7 +120,7 @@ class DocDump(object):
 
         imports_key = sorted(imports.keys())
         name_to_slugy = os.path.splitext(htmlpath)[0]
-        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+        slugy = utils.slugify(name_to_slugy)
         for imp in imports_key:
             content += templates.LIST_LINK_ITEM % {
                 'name': imp,
@@ -130,10 +129,15 @@ class DocDump(object):
 
         fromImports_key = sorted(fromImports.keys())
         for imp in fromImports_key:
-            content += templates.LIST_LINK_ITEM % {
-                'name': fromImports[imp]['module'] + ".%s" % imp,
-                'link': '%s#%s' % (htmlpath, fromImports[imp]['lineno'])
-            } + '\n'
+            # FIXME
+            try:
+                content += templates.LIST_LINK_ITEM % {
+                    'name': fromImports[imp]['module'] + ".%s" % imp,
+                    'link': '%s#%s' % (htmlpath, fromImports[imp]['lineno'])
+                } + '\n'
+            except Exception as exc:
+                print(exc)
+                continue
 
         return content
 
@@ -147,7 +151,7 @@ class DocDump(object):
 
             attrs_key = sorted(attrs.keys())
             name_to_slugy = os.path.splitext(htmlpath)[0]
-            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+            slugy = utils.slugify(name_to_slugy)
             for attr in attrs_key:
                 content += templates.LIST_LINK_ITEM % {
                     'name': "%s [at ln:%d]" % (attr, attrs[attr]),
@@ -176,7 +180,7 @@ class DocDump(object):
         """Add the function with the function content and style."""
         content = ''
         name_to_slugy = os.path.splitext(htmlpath)[0]
-        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+        slugy = utils.slugify(name_to_slugy)
         function_name = templates.FUNCTION % {
             'name': "%s [at ln:%d]" % (symbol['name'], symbol['lineno']),
             'link': '%s#%s-%s' % (htmlpath, slugy, symbol['lineno'])
@@ -213,7 +217,7 @@ class DocDump(object):
         content = ''
         clazzes = symbols.get('classes', [])
         name_to_slugy = os.path.splitext(htmlpath)[0]
-        slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+        slugy = utils.slugify(name_to_slugy)
         for clazz in clazzes:
             clazz_name = templates.CLASS % {
                 'name': clazz,
@@ -288,7 +292,7 @@ class DocDump(object):
         }
         for cla in sorted(self.__classes, key=lambda x: x[0]):
             name_to_slugy = os.path.splitext(cla[1])[0]
-            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+            slugy = utils.slugify(name_to_slugy)
             html += templates.HTML_FILES_BODY % {
                 'link': "%s#%s-%d" % (cla[1], slugy, cla[2]),
                 'name': cla[0]
@@ -309,7 +313,7 @@ class DocDump(object):
         }
         for fun in sorted(self.__functions, key=lambda x: x[0]):
             name_to_slugy = os.path.splitext(fun[1])[0]
-            slugy = utils.slugify(name_to_slugy.decode('utf-8'))
+            slugy = utils.slugify(name_to_slugy)
             html += templates.HTML_FILES_BODY % {
                 'link': "%s#%s-%d" % (fun[1], slugy, fun[2]),
                 'name': fun[0]
