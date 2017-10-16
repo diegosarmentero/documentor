@@ -224,11 +224,11 @@ class Analyzer(object):
         if symbol.args.vararg is not None:
             if not func_name.endswith('('):
                 func_name += ', '
-            func_name += '*' + symbol.args.vararg
+            func_name += '*' + symbol.args.vararg.arg
         if symbol.args.kwarg is not None:
             if not func_name.endswith('('):
                 func_name += ', '
-            func_name += '**' + symbol.args.kwarg
+            func_name += '**' + symbol.args.kwarg.arg
         func_name += ')'
 
         for sym in symbol.body:
