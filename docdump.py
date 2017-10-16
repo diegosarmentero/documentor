@@ -135,7 +135,8 @@ class DocDump(object):
                     'name': fromImports[imp]['module'] + ".%s" % imp,
                     'link': '%s#%s' % (htmlpath, fromImports[imp]['lineno'])
                 } + '\n'
-            except Exception:
+            except Exception as exc:
+                print(exc)
                 continue
 
         return content
