@@ -129,10 +129,14 @@ class DocDump(object):
 
         fromImports_key = sorted(fromImports.keys())
         for imp in fromImports_key:
-            content += templates.LIST_LINK_ITEM % {
-                'name': fromImports[imp]['module'] + ".%s" % imp,
-                'link': '%s#%s' % (htmlpath, fromImports[imp]['lineno'])
-            } + '\n'
+            # FIXME
+            try:
+                content += templates.LIST_LINK_ITEM % {
+                    'name': fromImports[imp]['module'] + ".%s" % imp,
+                    'link': '%s#%s' % (htmlpath, fromImports[imp]['lineno'])
+                } + '\n'
+            except Exception:
+                continue
 
         return content
 
